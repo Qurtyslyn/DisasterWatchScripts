@@ -3,10 +3,12 @@ import json
 import re
 import xml.etree.ElementTree as ET
 
-#Get Data from Smithsonian source
-url = "https://volcano.si.edu/news/WeeklyVolcanoCAP.xml"
+#Setup Output file
 output_file = "/var/www/DisasterWatch/Volcanoes.geojson"
 
+
+#Get Data from Smithsonian source
+url = "https://volcano.si.edu/news/WeeklyVolcanoCAP.xml"
 response = requests.get(url)
 
 response.raise_for_status()
