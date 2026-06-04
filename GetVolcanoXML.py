@@ -1,4 +1,5 @@
 import requests
+from bs4 import BeautifulSoup as BS
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -13,6 +14,29 @@ response = requests.get(url)
 
 response.raise_for_status()
 
+#Get Data from Smithsonian Web Page
+url = "https://volcano.si.edu/reports_weekly.cfm"
+webpage = requests.get(url)
+
+webpage.raise_for_status()
+
+#Parse Website table for additional Volcano info
+pageData = BS(webpage.content, "html.parser")
+
+table = pageData.find("tbody")
+tableData = {}
+
+#Loop Through Table rows and add data to tableData
+for row in table.find_all("tr"):
+    cells = row.find_all("td")
+    
+    #Strip the HTML from the cells
+    cells = [element.text.strip() for element in cells]
+
+    if cells:
+        tableData[cells[0]] = {"Country":cells[1],"Region":cells[2],"Date":cells[3],"ReportType":cells[4]}
+
+print(tableData)
 #Setup XML Tree for parsing
 xmlRoot = ET.fromstring(response.content)
 
@@ -53,6 +77,10 @@ for info in xmlRoot.findall("info"):
                        "Certainty":certainty,
                        "Description":description,
                        "Name":name,
+                       "StartDate":tableData[name]["Date"],
+                       "Country":tableData[name]["Country"],
+                       "Region":tableData[name]["Region"],
+                       "ReportType":tableData[name]["ReportType"],
                        },
     }
 
