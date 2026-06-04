@@ -36,7 +36,6 @@ for row in table.find_all("tr"):
     if cells:
         tableData[cells[0]] = {"Country":cells[1],"Region":cells[2],"Date":cells[3],"ReportType":cells[4]}
 
-print(tableData)
 #Setup XML Tree for parsing
 xmlRoot = ET.fromstring(response.content)
 
