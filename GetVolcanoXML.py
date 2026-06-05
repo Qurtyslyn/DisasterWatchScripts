@@ -7,16 +7,20 @@ import xml.etree.ElementTree as ET
 #Setup Output file
 output_file = "/var/www/DisasterWatch/Volcanoes.geojson"
 
+#Headers for web requests
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
 
 #Get Data from Smithsonian source
 url = "https://volcano.si.edu/news/WeeklyVolcanoCAP.xml"
-response = requests.get(url)
+response = requests.get(url, headers=headers)
 
 response.raise_for_status()
 
 #Get Data from Smithsonian Web Page
 url = "https://volcano.si.edu/reports_weekly.cfm"
-webpage = requests.get(url)
+webpage = requests.get(url, headers=headers)
 
 webpage.raise_for_status()
 
@@ -38,6 +42,8 @@ for row in table.find_all("tr"):
 
 #Setup XML Tree for parsing
 xmlRoot = ET.fromstring(response.content)
+
+
 
 #Remove Namespaces from tags
 for element in xmlRoot.iter():
