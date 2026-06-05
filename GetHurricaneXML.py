@@ -20,7 +20,7 @@ def extractKMLData(kmz):
 def getPolygonArray(str):
     #Split the list and remove the extra "0 " in the longitudes
     #flatlist = str.replace("0 ", "").split(",")
-    flatlist = re.sub(r"[0 \n]", "", str).split(",")
+    flatlist = re.sub(r"[ \n]", "", str.replace("0 ", "")).split(",")
 
 
     #Reshape the list into a 2-Dimensional List
@@ -97,23 +97,31 @@ for folder in kmlRoot.findall(".//Document/Folder"):
     coneKML = extractKMLData(response.content)
     coneRoot = removeNamespaces(ET.fromstring(coneKML))
     
-    print(ET.tostring(coneRoot, encoding="utf-8").decode("utf-8"))
     conePolygon = getPolygonArray(coneRoot.find("Document/Placemark/Polygon/outerBoundaryIs/LinearRing/coordinates").text)
 
+    feature = {
+        "type": "Feature",
+         "geometry": {
+            "type": "Polygon", "coordinates": [conePolygon]
+            },
+        "properties": {
+            # "Name":name,
+            # "Date":dateTime,
+            # "Movement":movement,
+            # "minimumPressure":minimumPressure,
+            # "maxSustainedWind":maxSustainedWind,
+            },
+    }
+
+    #Append feature to feature list
+    geojson['features'].append(feature)
 
     #Add fields to GeoJSON featre
     feature = {
         "type": "Feature",
          "geometry": {
-             "type": "GeometryCollection",
-             "geometries": [
-                 {
-                    "type": "Point", "coordinates": [lon,lat]
-                 },
-                 {
-                     "type": "Polygon", "coordinates": [conePolygon]
-                 }
-             ]},
+            "type": "Point", "coordinates": [lon,lat]
+            },
         "properties": {
             "Name":name,
             "Date":dateTime,
