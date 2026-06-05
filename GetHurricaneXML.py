@@ -17,7 +17,7 @@ def extractKMLData(kmz):
             return kml_file.read().decode('utf-8')
         
 #Extract a 2-Dimensional List from a comma separated string of coordinates
-def getPolygonArray(str):
+def getCoordinateArray(str):
     #Split the list and remove the extra "0 " in the longitudes
     #flatlist = str.replace("0 ", "").split(",")
     flatlist = re.sub(r"[ \n]", "", str.replace("0 ", "")).split(",")
@@ -40,6 +40,17 @@ def removeNamespaces(xml):
                     element.attrib[new_key] = element.attrib.pop(key)
     
     return xml
+
+def getKML(id):
+    URL = folder.find(f"NetworkLink[@id='{id}']/Link/href").text
+    response = requests.get(URL)
+
+    response.raise_for_status()
+
+    KML = extractKMLData(response.content)
+    Root = removeNamespaces(ET.fromstring(KML))
+    
+    return Root
 
 #Download initial KML File and parse to get each Hurricane
 #url = "https://www.nhc.noaa.gov/gis/kml/nhc_active.kml"
@@ -87,22 +98,66 @@ for folder in kmlRoot.findall(".//Document/Folder"):
     maxSustainedWind = folder.find("ExtendedData/Data[@name='maxSustainedWind']/value").text
 
     #Get Past Track
+    pastRoot = getKML("pasttrack")
+    pastData = pastRoot.findall("Document/Folder[@id='data']/Placemark/Point/coordinates")
+    
+    pastCoords = []
+    for coords in pastData:
+        coordList = coords.text.split(",")
+
+        pastLon = coordList[0]
+        pastLat = coordList[1]
+
+        pastCoords.append([pastLon,pastLat])
+
+    feature = {
+        "type": "Feature",
+         "geometry": {
+            "type": "LineString", "coordinates": pastCoords
+            },
+        "properties": {
+            # "Name":name,
+            # "Date":dateTime,
+            # "Movement":movement,
+            # "minimumPressure":minimumPressure,
+            # "maxSustainedWind":maxSustainedWind,
+            },
+    }
+
+    #Append feature to feature list
+    geojson['features'].append(feature)
 
     #Get Cone of Uncertainty
-    coneURL = folder.find("NetworkLink[@id='cone']/Link/href").text
-    response = requests.get(coneURL)
-
-    response.raise_for_status()
-
-    coneKML = extractKMLData(response.content)
-    coneRoot = removeNamespaces(ET.fromstring(coneKML))
+    coneRoot = getKML("cone")
     
-    conePolygon = getPolygonArray(coneRoot.find("Document/Placemark/Polygon/outerBoundaryIs/LinearRing/coordinates").text)
+    conePolygon = getCoordinateArray(coneRoot.find("Document/Placemark/Polygon/outerBoundaryIs/LinearRing/coordinates").text)
 
     feature = {
         "type": "Feature",
          "geometry": {
             "type": "Polygon", "coordinates": [conePolygon]
+            },
+        "properties": {
+            # "Name":name,
+            # "Date":dateTime,
+            # "Movement":movement,
+            # "minimumPressure":minimumPressure,
+            # "maxSustainedWind":maxSustainedWind,
+            },
+    }
+
+    #Append feature to feature list
+    geojson['features'].append(feature)
+
+    #Get Predicted Track
+    predRoot = getKML("track")
+
+    predCoords = getCoordinateArray(predRoot.findall("Document/Folder/Placemark/LineString/coordinates")[1].text)
+
+    feature = {
+        "type": "Feature",
+         "geometry": {
+            "type": "LineString", "coordinates": predCoords
             },
         "properties": {
             # "Name":name,
