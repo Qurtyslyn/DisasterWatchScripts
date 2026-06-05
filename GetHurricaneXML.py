@@ -79,8 +79,8 @@ for folder in kmlRoot.findall(".//Document/Folder"):
 
     #Get data from KML
     name = folder.find("name").text
-    lat = folder.find("ExtendedData/Data[@name='centerLon']/value").text
-    lon = folder.find("ExtendedData/Data[@name='centerLat']/value").text
+    lat = folder.find("ExtendedData/Data[@name='centerLat']/value").text
+    lon = folder.find("ExtendedData/Data[@name='centerLon']/value").text
     dateTime = folder.find("ExtendedData/Data[@name='dateTime']/value").text
     movement = folder.find("ExtendedData/Data[@name='movement']/value").text
     minimumPressure = folder.find("ExtendedData/Data[@name='minimumPressure']/value").text
