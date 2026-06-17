@@ -53,17 +53,17 @@ def getKML(id):
     return Root
 
 #Download initial KML File and parse to get each Hurricane
-#url = "https://www.nhc.noaa.gov/gis/kml/nhc_active.kml"
-#response = requests.get(url)
+url = "https://www.nhc.noaa.gov/gis/kml/nhc_active.kml"
+response = requests.get(url)
 
-#response.raise_for_status()
+response.raise_for_status()
 
 #Setup XML Tree for parsing
-#kmlRoot = removeNamespaces(ET.fromstring(response.content))
+kmlRoot = removeNamespaces(ET.fromstring(response.content))
 
 #For Local Testing
-tree = ET.parse("/home/curtis/Downloads/nhc_active(1).kml")
-kmlRoot = removeNamespaces(tree.getroot())
+#tree = ET.parse("/home/curtis/Downloads/nhc_active(1).kml")
+#kmlRoot = removeNamespaces(tree.getroot())
 
 #Remove Namespaces from tags
 # for element in kmlRoot.iter():
