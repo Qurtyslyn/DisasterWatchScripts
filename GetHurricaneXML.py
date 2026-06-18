@@ -149,6 +149,28 @@ for folder in kmlRoot.findall(".//Document/Folder"):
     #Append feature to feature list
     geojson['features'].append(feature)
 
+    #Get Wind Radius
+    windRadiusRoot = getKML("initialwindfield")
+
+    windPolygon = getCoordinateArray(coneRoot.find("Document/Placemark/Polygon/outerBoundaryIs/LinearRing/coordinates").text)
+
+    feature = {
+        "type": "Feature",
+         "geometry": {
+            "type": "Polygon", "coordinates": [windPolygon]
+            },
+        "properties": {
+            # "Name":name,
+            # "Date":dateTime,
+            # "Movement":movement,
+            # "minimumPressure":minimumPressure,
+            # "maxSustainedWind":maxSustainedWind,
+            },
+    }
+
+    #Append feature to feature list
+    geojson['features'].append(feature)
+
     #Get Predicted Track
     predRoot = getKML("track")
 
