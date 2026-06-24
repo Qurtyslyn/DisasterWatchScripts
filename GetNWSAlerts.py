@@ -32,6 +32,9 @@ response.raise_for_status()
 
 nwsData = response.json()
 
+#Rewrite for loop to loop through Zones (which is M Large)
+#And match to Alerts (which is n Large, 10x smaller than M)
+
 for feature in nwsData["features"]:
     if feature['geometry'] is None:
         geocode = feature['properties']['geocode']["UGC"]
