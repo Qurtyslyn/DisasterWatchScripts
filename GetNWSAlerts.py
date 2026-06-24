@@ -51,5 +51,5 @@ for feature in nwsData["features"]:
 
 #print(json.dumps(nwsData, indent=4))
 
-with open("./NWSAlerts.geojson", 'w') as file:
+with open(output_file, 'w') as file:
     json.dump(nwsData, file)
