@@ -62,8 +62,8 @@ for index in emptyGeoEntry:
     #If Alert covers more than one zone, change geometry type to MultiPolgon and attach additional zones to Geometry
     else:
         nwsData['features'][index]['geometry'] = {}
-        
-        nwsData['features'][index]['geometry']['type'] = "Multipolygon"
+
+        nwsData['features'][index]['geometry']['type'] = "MultiPolygon"
 
         nwsData['features'][index]['geometry']['coordinates'] = []
 
