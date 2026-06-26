@@ -51,6 +51,8 @@ for feature in zonesData['features']:
 del zonesData
 gc.collect()
 
+print(list( (Counter(zoneNeeded)-Counter(coordinateDict.keys())).elements()))
+
 #Loop through only empty Geometries and fill in from CoordinateDict
 for index in emptyGeoEntry:
     geocode = nwsData['features'][index]['properties']['geocode']["UGC"]
