@@ -1,27 +1,18 @@
 import requests
 import json
-
+import gc
+import sys
+from collections import Counter
 
 #Setup Output file
 output_file = "/var/www/DisasterWatch/NWS.geojson"
 
 #GeoJSON Files
-coastalJSON = "./NWSCoastalZones.geojson"
-zonesJSON = "./NWSZones.geojson"
+zonesJSON = "./Zones.geojson"
 
 #Load local GeoJSON files
-with open(coastalJSON, 'r') as file:
-    coastalData = json.load(file)
-
 with open(zonesJSON, 'r') as file:
     zonesData = json.load(file)
-
-#Combine Zones
-coastalData['features'] = coastalData['features'] + zonesData['features']
-
-zones = coastalData
-
-#print(zones['features'][0]['properties']['ID'])
 
 #Load Data from NWS
 NWSURL = 'https://api.weather.gov/alerts/active?status=actual'
@@ -32,27 +23,44 @@ response.raise_for_status()
 
 nwsData = response.json()
 
-#Rewrite for loop to loop through Zones (which is M Large)
-#And match to Alerts (which is n Large, 10x smaller than M)
+#Loop through alerts and find Empty Geometries to speed up future loops
+#Get list of Zones needed for polygons
+entry = 0
+emptyGeoEntry = []
+zoneNeeded = []
 
-for feature in nwsData["features"]:
+for feature in nwsData['features']:
     if feature['geometry'] is None:
-        geocode = feature['properties']['geocode']["UGC"]
+        emptyGeoEntry.append(entry)
 
-        if len(geocode) == 1:
-            
-            for item in zones['features']:
-                ID = item['properties']['ID']
-                
-                if geocode[0] == ID:
-                   #print(item['properties']['ID'])
-                   feature['geometry'] = item['geometry']
-                #break
-            #feature['geometry'] = next((item['geometry'] for item in zones['features'] if item['properties']['ID'] == geocode),None)
-            #print(feature['geometry'])
+        for ID in feature['properties']['geocode']["UGC"]:
+            if ID not in zoneNeeded:
+                zoneNeeded.append(ID)
+        
+    entry = entry + 1
 
+#Create a dict for coordinates for geometries to fill in empty ones
+coordinateDict = {}
 
-#print(json.dumps(nwsData, indent=4))
+#Loop through zones and add geometries to Dcit
+for feature in zonesData['features']:
+    if feature['properties']['ID'] in zoneNeeded:
+        coordinateDict[feature['properties']['ID']] = feature['geometry']
+
+#Destroy zonesData variable to free up memory
+del zonesData
+gc.collect()
+
+#Loop through only empty Geometries and fill in from CoordinateDict
+for index in emptyGeoEntry:
+    geocode = nwsData['features'][index]['properties']['geocode']["UGC"]
+
+    #If Alert only covers one zone
+    if len(geocode) == 1:
+        if(geocode[0] in coordinateDict.keys()):
+            nwsData['features'][index]['geometry'] = coordinateDict[geocode[0]]
+    #If Alert covers more than one zone, change geometry type to MultiPolgon and attach additional zones to Geometry
+    #else
 
 with open(output_file, 'w') as file:
     json.dump(nwsData, file)
