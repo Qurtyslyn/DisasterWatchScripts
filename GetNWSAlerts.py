@@ -57,10 +57,20 @@ for index in emptyGeoEntry:
 
     #If Alert only covers one zone
     if len(geocode) == 1:
-        if(geocode[0] in coordinateDict.keys()):
+        if geocode[0] in coordinateDict.keys():
             nwsData['features'][index]['geometry'] = coordinateDict[geocode[0]]
     #If Alert covers more than one zone, change geometry type to MultiPolgon and attach additional zones to Geometry
-    #else
+    else:
+        nwsData['features'][index]['geometry'] = {}
+        
+        nwsData['features'][index]['geometry']['type'] = "Multipolygon"
+
+        nwsData['features'][index]['geometry']['coordinates'] = []
+
+        for zone in geocode:
+            if zone in coordinateDict.keys():
+                nwsData['features'][index]['geometry']['coordinates'].append(coordinateDict[zone])
+
 
 with open(output_file, 'w') as file:
     json.dump(nwsData, file)
