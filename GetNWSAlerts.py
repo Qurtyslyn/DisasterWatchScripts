@@ -79,9 +79,11 @@ for index in emptyGeoEntry:
 
         for zone in geocode:
             if zone in coordinateDict.keys():
-                coordList.append(coordinateDict[zone])
+                coordList.append(coordinateDict[zone]['coordinates'])
 
         nwsData['features'][index]['geometry']['coordinates'].append(coordList)
+
+
 
 
 with open(output_file, 'w') as file:
