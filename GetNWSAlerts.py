@@ -33,6 +33,9 @@ for feature in nwsData['features']:
     if feature['geometry'] is None:
         emptyGeoEntry.append(entry)
 
+        if 'UGC' not in feature['properties']['geocode'].keys():
+            continue
+
         for ID in feature['properties']['geocode']["UGC"]:
             if ID not in zoneNeeded:
                 zoneNeeded.append(ID)
@@ -55,6 +58,9 @@ print(list( (Counter(zoneNeeded)-Counter(coordinateDict.keys())).elements()))
 
 #Loop through only empty Geometries and fill in from CoordinateDict
 for index in emptyGeoEntry:
+    if 'UGC' not in nwsData['features'][index]['properties']['geocode'].keys():
+            continue
+    
     geocode = nwsData['features'][index]['properties']['geocode']["UGC"]
 
     #If Alert only covers one zone
