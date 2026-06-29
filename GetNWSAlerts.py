@@ -8,7 +8,8 @@ from collections import Counter
 output_file = "/var/www/DisasterWatch/NWS.geojson"
 
 #GeoJSON Files
-zonesJSON = "./Zones.geojson"
+#zonesJSON = "./Zones.geojson"
+zonesJSON = "/home/curtis/DisasterWatchScripts/Zones.geojson"
 
 #Load local GeoJSON files
 with open(zonesJSON, 'r') as file:
