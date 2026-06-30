@@ -84,13 +84,14 @@ for index in emptyGeoEntry:
                 for polygon in coordinateDict[zone]['coordinates']:
                     #nwsData['features'][index]['geometry']['coordinates'].append(polygon)
                     coordList.append(polygon)
+                    #print(len(polygon))
 
             nwsData['features'][index]['geometry']['coordinates'].append(coordList)
-        print(index)
+        #print(index)
         break
 
 
 
 
 with open(output_file, 'w') as file:
-    json.dump(nwsData, file)
+    json.dump(nwsData, file, indent=4)
