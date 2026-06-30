@@ -80,10 +80,11 @@ for index in emptyGeoEntry:
 
         for zone in geocode:
             if zone in coordinateDict.keys():
-                nwsData['features'][index]['geometry']['coordinates'].append(coordinateDict[zone]['coordinates'])
+                for polygon in coordinateDict[zone]['coordinates']:
+                    nwsData['features'][index]['geometry']['coordinates'].append(polygon)
 
         #nwsData['features'][index]['geometry']['coordinates'].append(coordList)
-        print(nwsData['features'][index]['properties'])
+        print(index)
         break
 
 
