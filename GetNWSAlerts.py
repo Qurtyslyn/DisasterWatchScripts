@@ -81,13 +81,18 @@ for index in emptyGeoEntry:
         for zone in geocode:
             coordList = []
             if zone in coordinateDict.keys():
-                #if len(coordinateDict[zone]['coordinates']) > 1:
-                    #print("Index: " + str(index))
-                    #print("Length: " + str(len(coordinateDict[zone]['coordinates'])))
+                if len(coordinateDict[zone]['coordinates']) > 1:
+                    print("Index: " + str(index))
+                    print("Length: " + str(len(coordinateDict[zone]['coordinates'])))
+
                 for polygon in coordinateDict[zone]['coordinates']:
+                    if len(coordinateDict[zone]['coordinates']) > 1:
+                        for subPoly in polygon:
+                            coordList.append(subPoly)
+                    else:
                     #nwsData['features'][index]['geometry']['coordinates'].append(polygon)
-                    coordList.append(polygon)
-                    #print(len(polygon))
+                        coordList.append(polygon)
+                    #print("Polygon: " + str(len(polygon)))
 
             nwsData['features'][index]['geometry']['coordinates'].append(coordList)
         #print(index)
