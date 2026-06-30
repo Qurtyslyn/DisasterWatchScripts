@@ -90,4 +90,4 @@ for index in emptyGeoEntry:
 
 
 with open(output_file, 'w') as file:
-    json.dump(nwsData, file, indent=4)
+    json.dump(nwsData, file)
