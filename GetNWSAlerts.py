@@ -82,7 +82,9 @@ for index in emptyGeoEntry:
             if zone in coordinateDict.keys():
                 coordList.append(coordinateDict[zone]['coordinates'])
 
-        #nwsData['features'][index]['geometry']['coordinates'].append(coordList)
+        nwsData['features'][index]['geometry']['coordinates'].append(coordList)
+        print(nwsData['features'][index]['properties'])
+        break
 
 
 
