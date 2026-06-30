@@ -81,6 +81,9 @@ for index in emptyGeoEntry:
         for zone in geocode:
             coordList = []
             if zone in coordinateDict.keys():
+                #if len(coordinateDict[zone]['coordinates']) > 1:
+                    #print("Index: " + str(index))
+                    #print("Length: " + str(len(coordinateDict[zone]['coordinates'])))
                 for polygon in coordinateDict[zone]['coordinates']:
                     #nwsData['features'][index]['geometry']['coordinates'].append(polygon)
                     coordList.append(polygon)
@@ -88,10 +91,9 @@ for index in emptyGeoEntry:
 
             nwsData['features'][index]['geometry']['coordinates'].append(coordList)
         #print(index)
-        break
 
 
 
 
 with open(output_file, 'w') as file:
-    json.dump(nwsData, file, indent=4)
+    json.dump(nwsData, file)
