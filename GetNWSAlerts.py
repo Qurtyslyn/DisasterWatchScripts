@@ -87,8 +87,13 @@ for index in emptyGeoEntry:
 
                 for polygon in coordinateDict[zone]['coordinates']:
                     if len(coordinateDict[zone]['coordinates']) > 1:
-                        for subPoly in polygon:
-                            coordList.append(subPoly)
+                        print("MultiPolygon")
+                        # for subPoly in polygon:
+                        #     if isinstance(subPoly, list):
+                        #         for triPoly in subPoly:
+                        #             coordList.append(triPoly)
+                        #     else:
+                        #         coordList.append(subPoly)
                     else:
                     #nwsData['features'][index]['geometry']['coordinates'].append(polygon)
                         coordList.append(polygon)
