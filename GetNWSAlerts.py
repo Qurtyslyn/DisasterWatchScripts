@@ -4,6 +4,16 @@ import gc
 import sys
 from collections import Counter
 
+def checkPolygonDepth(lst):
+    if  not isinstance(lst, list):
+        return 0
+    elif isinstance(lst, list) and not isinstance(lst[0], list):
+        return 1
+    elif isinstance(lst, list) and isinstance(lst[0], list) and not isinstance(lst[0][0], list):
+        return 2
+    else:
+        return 3
+
 #Setup Output file
 output_file = "/var/www/DisasterWatch/NWS.geojson"
 
@@ -55,7 +65,7 @@ for feature in zonesData['features']:
 del zonesData
 gc.collect()
 
-print(list( (Counter(zoneNeeded)-Counter(coordinateDict.keys())).elements()))
+#print(list( (Counter(zoneNeeded)-Counter(coordinateDict.keys())).elements()))
 
 #Loop through only empty Geometries and fill in from CoordinateDict
 for index in emptyGeoEntry:
@@ -81,14 +91,23 @@ for index in emptyGeoEntry:
         for zone in geocode:
             coordList = []
             if zone in coordinateDict.keys():
-                if len(coordinateDict[zone]['coordinates']) > 1:
-                    print("Index: " + str(index))
-                    print("Length: " + str(len(coordinateDict[zone]['coordinates'])))
+                #if len(coordinateDict[zone]['coordinates']) > 1:
+                    #print("Index: " + str(index))
+                    #print("Length: " + str(len(coordinateDict[zone]['coordinates'])))
 
                 for polygon in coordinateDict[zone]['coordinates']:
                     if len(coordinateDict[zone]['coordinates']) > 1:
-                        print("MultiPolygon")
+                        #placeholder
+                        temp = 1
+
                         # for subPoly in polygon:
+                        #     #print("Depth: " + str(checkPolygonDepth(subPoly)))
+                        #     if checkPolygonDepth(subPoly) == 2:
+                                
+                        #         container = []
+                        #         container.append(subPoly)
+                        #         coordList.append(container)
+                                
                         #     if isinstance(subPoly, list):
                         #         for triPoly in subPoly:
                         #             coordList.append(triPoly)
@@ -96,6 +115,7 @@ for index in emptyGeoEntry:
                         #         coordList.append(subPoly)
                     else:
                     #nwsData['features'][index]['geometry']['coordinates'].append(polygon)
+                        #print("Needed Depth: " + str(checkPolygonDepth(polygon)))
                         coordList.append(polygon)
                     #print("Polygon: " + str(len(polygon)))
 
